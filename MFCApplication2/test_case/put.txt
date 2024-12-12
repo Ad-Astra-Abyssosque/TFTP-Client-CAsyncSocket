@@ -1,0 +1,161 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+int main()
+{
+system("pause");
+}
+--------------------------------------------------------------------------------------------
+	.model small
+	.stack
+	.data
+    .code
+	.startup
+     .exit 0
+--------------------------------------------------------------------------------------------------------------------
+折半插入非递归
+void func(int n, int a[])
+{
+	int*p;
+	int high, middle, low;
+	int i,temp;
+	low = 0;
+	i = 1, high = 0;
+	while (i < n)
+	{
+		while ((high - low) > 1)/*对a[i]进行折半查找，确定插入位置*/
+		{
+			middle = (high + low) / 2;
+			if (a[i] > a[middle])
+			{
+				low = middle;
+			}
+			else
+			{
+				high = middle;
+			}
+		}
+		if (a[i] <= a[low]) temp = low;
+		if (a[i] > a[low] && a[i] < a[high]) temp = high;
+		if (a[i] >= a[high]) temp = high + 1;
+		for (p = &a[n]; p != &a[temp]; p--)/*将temp及之后的数全部右移，将该位置腾出*/
+		{
+			*p = *(p - 1);
+		}
+		*p = a[i + 1];/*插入*/
+		i++;
+		for (p = &a[i]; p != &a[n]; p++)/*将a[i]之后的数全部左移，将原来的a[i]取代,归位操作*/
+		{
+			*p = *(p + 1);
+		}
+		high = i-1;
+		low = 0;
+	}
+	return;
+}
+-----------------------------------------------------------------------------------------------------------------------
+直接插入排序
+#include<stdio.h>
+#include<stdlib.h>
+void func(int n, int a[])
+{
+	int i, flag, temp;
+	int*p;
+	i = 1;
+	flag = a[0];
+	while (i != n)
+	{
+		while (a[i] > flag&&i != n)/*如果a[i]比flag大，那么a[i]直接取代flag，比较下一个数*/
+		{
+			flag = a[i];
+			i++;
+			temp = i;
+		}
+		while (a[i] < flag&&i != n)/*如果a[i]比flag小，寻找a[i]的位置，并进行插入*/
+		{
+			do
+			{
+				temp--;
+			} while (a[i] < a[temp] && temp != -1);
+			temp++;/*此时temp是应该插入的位置*/
+			for (p = &a[n]; p != &a[temp]; p--)/*将temp及之后的数全部右移，将该位置腾出*/
+			{
+				*p = *(p - 1);
+			}
+			*p = a[i + 1];/*插入*/
+			flag = a[i];
+			i++;
+			for (p = &a[i]; p != &a[n]; p++)/*将a[i]之后的数全部左移，将原来的a[i]取代,归位操作*/
+			{
+				*p = *(p + 1);
+			}
+			temp = i;
+		}
+	}
+	return;
+}
+int main()
+{
+	int n = 7,i;
+	int b[8] = { 5,9,10,7,6,2,11 };
+	func(n,b);
+	for (i = 0; i < n; i++)
+	{
+		printf("%d ", b[i]);
+	}
+	system("pause");
+}
+-----------------------------------------------------------------------------------------------------------------------
+递归
+#include<stdio.h>
+#include<stdlib.h>
+void func(int n, int a[],int i)
+{
+	int*p;
+	int high, middle, low;
+	int temp;
+	low = 0;
+	high = i-1;
+	if (i == n) return;
+	else
+	{
+		while ((high - low) > 1)/*对a[i]进行折半查找，确定插入位置*/
+		{
+			middle = (high + low) / 2;
+			if (a[i] > a[middle])
+			{
+				low = middle;
+			}
+			else
+			{
+				high = middle;
+			}
+		}
+		if (a[i] <= a[low]) temp = low;
+		if (a[i] > a[low] && a[i] < a[high]) temp = high;
+		if (a[i] >= a[high]) temp = high + 1;
+		for (p = &a[n]; p != &a[temp]; p--)/*将temp及之后的数全部右移，将该位置腾出*/
+		{
+			*p = *(p - 1);
+		}
+		*p = a[i + 1];/*插入*/
+		i++;
+		for (p = &a[i]; p != &a[n]; p++)/*将a[i]之后的数全部左移，将原来的a[i]取代,归位操作*/
+		{
+			*p = *(p + 1);
+		}
+		func(n, a, i);
+	}
+}
+int main()
+{
+	int n = 7, i;
+	int b[8] = { 15,9,10,7,6,2,3 };
+	func(n, b,1);
+	for (i = 0; i < n; i++)
+	{
+		printf("%d ", b[i]);
+	}
+	system("pause");
+}
